@@ -2,7 +2,7 @@
 
 import { createContext, useState, useEffect } from "react";
 import { AppConfig, UserSession, showConnect } from "@stacks/connect";
-import { StacksMainnet, StacksTestnet } from "@stacks/network";
+import { HiroMainnet, HiroTestnet } from "@stacks/network";
 import type { StacksNetwork } from "@stacks/network";
 
 interface WalletContextType {
@@ -26,7 +26,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     if (userSession.isUserSignedIn()) {
       const userData = userSession.loadUserData();
       setStxAddress(userData.profile.stxAddress.mainnet);
-      setNetwork(new StacksMainnet());
+      setNetwork(new HiroMainnet());
     }
   }, []);
 
@@ -40,8 +40,8 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         if (userSession.isUserSignedIn()) {
             const userData = userSession.loadUserData();
             const currentNetwork = userData.profile.stxAddress.testnet 
-                ? new StacksTestnet() 
-                : new StacksMainnet();
+                ? new HiroTestnet() 
+                : new HiroMainnet();
 
             setStxAddress(
                 currentNetwork.isMainnet()
