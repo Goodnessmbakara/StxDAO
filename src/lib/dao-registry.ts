@@ -9,12 +9,17 @@ import type { KnownDao } from './types';
 import type { Network } from './stacks-types';
 
 /**
- * Registry of known DAOs with metadata
+ * Registry of known DAOs with metadata  
  */
 export const KNOWN_DAOS: KnownDao[] = [
   {
     name: 'Stacking DAO',
     contractAddress: 'SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.stacking-dao-core-v6',
+    network: 'mainnet',
+  },
+  {
+    name: 'Arkadiko DAO',
+    contractAddress: 'SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-dao',
     network: 'mainnet',
   },
   {
