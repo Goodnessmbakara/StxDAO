@@ -20,6 +20,7 @@ const userSession = new UserSession({ appConfig });
 
 // It's better to default to one network and let user switch if needed
 const network = new StacksTestnet(); 
+const IS_MAINNET = network instanceof StacksMainnet;
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [stxAddress, setStxAddress] = useState<string | null>(null);
@@ -28,7 +29,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     if (userSession.isUserSignedIn()) {
       const userData = userSession.loadUserData();
       // Logic to determine address based on network
-      const address = network.isMainnet
+      const address = IS_MAINNET
         ? userData.profile.stxAddress.mainnet
         : userData.profile.stxAddress.testnet;
       setStxAddress(address);
@@ -44,7 +45,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       onFinish: () => {
         if (userSession.isUserSignedIn()) {
             const userData = userSession.loadUserData();
-            const address = network.isMainnet
+            const address = IS_MAINNET
                 ? userData.profile.stxAddress.mainnet
                 : userData.profile.stxAddress.testnet;
             setStxAddress(address);
