@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import Link from 'next/link';
 import Header from '@/components/layout/header';
 import DaoSelector from '@/components/dao/dao-selector';
 import { getKnownDaos, getDaoTreasury, getDaoProposals } from '@/lib/dao';
@@ -7,6 +8,7 @@ import ProposalsList from '@/components/dao/proposals-list';
 import EmptyState from '@/components/dao/empty-state';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 
 export default async function Home({ searchParams }: { searchParams?: { dao?: string } }) {
   const knownDaos = await getKnownDaos();
@@ -17,6 +19,11 @@ export default async function Home({ searchParams }: { searchParams?: { dao?: st
       <Header />
       <main className="flex-1 container mx-auto p-4 md:p-8">
         <div className="flex flex-col gap-8">
+          <div className="flex justify-end">
+            <Button asChild>
+              <Link href="/create-dao">Create Your DAO</Link>
+            </Button>
+          </div>
           <DaoSelector knownDaos={knownDaos} />
           {selectedDaoAddress ? (
             <Suspense fallback={<DaoDataSkeleton />}>
