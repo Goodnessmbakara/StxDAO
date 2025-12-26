@@ -2,13 +2,13 @@
 
 import { createContext, useState, useEffect } from "react";
 import { AppConfig, UserSession, showConnect } from "@stacks/connect";
-import { HiroMainnet, HiroTestnet } from "@stacks/network";
+import { StacksTestnet, StacksMainnet } from '@stacks/network';
 import type { StacksNetwork } from "@stacks/network";
 
 interface WalletContextType {
   userSession: UserSession;
   stxAddress: string | null;
-  network: StacksNetwork | null;
+  network: StacksNetwork;
   connectWallet: () => void;
   disconnectWallet: () => void;
 }
@@ -18,15 +18,20 @@ export const WalletContext = createContext<WalletContextType | null>(null);
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ appConfig });
 
+// It's better to default to one network and let user switch if needed
+const network = new StacksTestnet(); 
+
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [stxAddress, setStxAddress] = useState<string | null>(null);
-  const [network, setNetwork] = useState<StacksNetwork | null>(null);
 
   useEffect(() => {
     if (userSession.isUserSignedIn()) {
       const userData = userSession.loadUserData();
-      setStxAddress(userData.profile.stxAddress.mainnet);
-      setNetwork(new HiroMainnet());
+      // Logic to determine address based on network
+      const address = network.isMainnet
+        ? userData.profile.stxAddress.mainnet
+        : userData.profile.stxAddress.testnet;
+      setStxAddress(address);
     }
   }, []);
 
@@ -39,16 +44,10 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       onFinish: () => {
         if (userSession.isUserSignedIn()) {
             const userData = userSession.loadUserData();
-            const currentNetwork = userData.profile.stxAddress.testnet 
-                ? new HiroTestnet() 
-                : new HiroMainnet();
-
-            setStxAddress(
-                currentNetwork.isMainnet()
+            const address = network.isMainnet
                 ? userData.profile.stxAddress.mainnet
-                : userData.profile.stxAddress.testnet
-            );
-            setNetwork(currentNetwork);
+                : userData.profile.stxAddress.testnet;
+            setStxAddress(address);
         }
       },
       userSession,
@@ -59,7 +58,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     if (userSession.isUserSignedIn()) {
       userSession.signUserOut("/");
       setStxAddress(null);
-      setNetwork(null);
     }
   };
 
